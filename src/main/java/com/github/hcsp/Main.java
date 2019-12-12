@@ -35,8 +35,11 @@ public class Main {
             }
             if (isInterestedLink(link)) {
                 //这是我们感兴趣的，我们只处理新浪站内的链接
+                if (link.charAt(6) == '\\') {
+                    continue;
+                }
                Document doc =  httpGetAndParseHtml(link);
-               doc.select("a").stream().map(aTag -> aTag.attr("hreaf")).forEach(linkpool::add);
+               doc.select("a").stream().map(aTag -> aTag.attr("href")).forEach(linkpool::add);
                 //假如这是一个新闻页面，就存入数据库，否则就什么都不做
                 storeIntoDatabaseIfItIsNewsPage(doc);
                 processedLinks.add(link);
@@ -58,14 +61,12 @@ public class Main {
         }
     }
 
-    private static Document httpGetAndParseHtml(String link) {
+    private static Document httpGetAndParseHtml(String link) throws IOException {
         CloseableHttpClient httpclient = HttpClients.createDefault();
         if (link.startsWith("//")) {
             link = "https:" + link;
         }
-        if (link.charAt(6) == '\\') {
-            continue;
-        }
+
         System.out.println(link);
         HttpGet httpGet = new HttpGet(link);
         httpGet.addHeader("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36");
