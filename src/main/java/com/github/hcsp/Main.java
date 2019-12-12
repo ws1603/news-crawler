@@ -9,9 +9,7 @@ import org.apache.http.util.EntityUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -38,18 +36,14 @@ public class Main {
                 if (link.charAt(6) == '\\') {
                     continue;
                 }
-               Document doc =  httpGetAndParseHtml(link);
-               doc.select("a").stream().map(aTag -> aTag.attr("href")).forEach(linkpool::add);
+                Document doc = httpGetAndParseHtml(link);
+                doc.select("a").stream().map(aTag -> aTag.attr("href")).forEach(linkpool::add);
                 //假如这是一个新闻页面，就存入数据库，否则就什么都不做
                 storeIntoDatabaseIfItIsNewsPage(doc);
                 processedLinks.add(link);
             }
-
         }
     }
-
-
-
 
     public static void storeIntoDatabaseIfItIsNewsPage(Document doc) {
         ArrayList<Element> articleTags = doc.select("article");
