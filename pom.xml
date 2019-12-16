@@ -59,7 +59,11 @@
             <version>3.0.1</version>
             <scope>provided</scope>
         </dependency>
-
+        <dependency>
+            <groupId>org.mybatis</groupId>
+            <artifactId>mybatis</artifactId>
+            <version>3.5.3</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -127,13 +131,6 @@
                     <user>root</user>
                     <password>root</password>
                 </configuration>
-<!--                <dependencies>-->
-<!--                    <dependency>-->
-<!--                        <groupId>com.h2database</groupId>-->
-<!--                        <artifactId>h2</artifactId>-->
-<!--                        <version>1.4.193</version>-->
-<!--                    </dependency>-->
-<!--                </dependencies>-->
             </plugin>
         </plugins>
     </build>
