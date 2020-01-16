@@ -15,39 +15,41 @@ import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 
-public class Crawler {
+public class Crawler extends Thread{
+    private CrawlerDao dao;
 
-    private CrawlerDao dao = new MybatisCrawlerDao();
+    Crawler(CrawlerDao dao) {
+        this.dao = dao;
+    }
 
-    private void run() throws SQLException, IOException {
-        String link;
-        //从数据库中加载下一个链接，如果能玩加载到则进行循环
-        while ((link = dao.getNextLinkThenDelete()) != null) {
+    @Override
+    public void run(){
+        try {
+            String link;
+            //从数据库中加载下一个链接，如果能玩加载到则进行循环
+            while ((link = dao.getNextLinkThenDelete()) != null) {
 
-            if (dao.isLinkProcessed(link)) {
-                continue;
+                if (dao.isLinkProcessed(link)) {
+                    continue;
+                }
+
+                if (isInterestedLink(link)) {
+
+                    Document doc = httpGetAndParseHtml(link);
+
+                    parseUrlsFromPageAndStoreIntoDatabase(doc);
+
+                    storeIntoDatabaseIfItIsNewsPage(doc, link);
+
+                    dao.insertProcessedLink(link);
+                }
             }
-
-            if (isInterestedLink(link)) {
-
-                Document doc = httpGetAndParseHtml(link);
-
-                parseUrlsFromPageAndStoreIntoDatabase(doc);
-
-                storeIntoDatabaseIfItIsNewsPage(doc, link);
-
-                dao.insertProcessedLink(link);
-//                dao.updateDatabase(link, "insert into links_already_processed (link) values(?)");
-            }
+        }catch(Exception e){
+            throw new RuntimeException(e);
         }
     }
 
-    @SuppressFBWarnings("DMI_CONSTANT_DB_PASSWORD")
-    public static void main(String[] args) throws IOException, SQLException {
-        new Crawler().run();
-    }
-
-    private void parseUrlsFromPageAndStoreIntoDatabase(Document doc) throws SQLException {
+    private synchronized void parseUrlsFromPageAndStoreIntoDatabase(Document doc) throws SQLException {
         for (Element aTag : doc.select("a")) {
             String href = aTag.attr("href");
             if (href.startsWith("//")) {
@@ -55,7 +57,6 @@ public class Crawler {
             }
             if (!(href.toLowerCase().startsWith("javascript") || href.startsWith("#"))) {
                 dao.insertLinkToBeProcessed(href);
-//                dao.updateDatabase(href, "insert into links_to_be_processed (link) values(?)");
             }
         }
     }
@@ -71,7 +72,7 @@ public class Crawler {
         }
     }
 
-    private static Document httpGetAndParseHtml(String link) throws IOException {
+    private synchronized Document httpGetAndParseHtml(String link) throws IOException {
         //这是我们感兴趣的，我们只处理新浪站内的链接
         CloseableHttpClient httpclient = HttpClients.createDefault();
         if (link.contains("\\/")) {
@@ -81,7 +82,6 @@ public class Crawler {
         HttpGet httpGet = new HttpGet(link);
         httpGet.addHeader("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36");
         try (CloseableHttpResponse response1 = httpclient.execute(httpGet)) {
-            System.out.println(response1.getStatusLine());
             HttpEntity entity1 = response1.getEntity();
             String html = EntityUtils.toString(entity1);
             return Jsoup.parse(html);

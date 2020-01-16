@@ -64,6 +64,16 @@
             <artifactId>mybatis</artifactId>
             <version>3.5.3</version>
         </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.17</version>
+        </dependency>
+        <dependency>
+            <groupId>org.elasticsearch.client</groupId>
+            <artifactId>elasticsearch-rest-high-level-client</artifactId>
+            <version>7.5.1</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -127,7 +137,7 @@
 <!--                <version>6.1.1</version>-->
                 <version>5.2.4</version>
                 <configuration>
-                    <url>jdbc:h2:file:/D:/crawler/news-crawer/news</url>
+                    <url>jdbc:mysql://localhost:3306/news?characterEncoding=UTF-8</url>
                     <user>root</user>
                     <password>root</password>
                 </configuration>

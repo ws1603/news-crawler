@@ -15,7 +15,7 @@
     </delete>
     <insert id="insertNews" parameterType="com.github.hcsp.News">
         insert into news (title,url,content,created_at,modified_at)
-        values(#{url},#{title},#{content},now(),now())
+        values(#{title},#{url},#{content},now(),now())
     </insert>
     <select id="countLink" parameterType="String" resultType="int">
         select count(link)
