@@ -25,3 +25,9 @@ hs_err_pid*
 target/
 .idea
 *.db
+
+esdata
+
+mysql-data
+
+

@@ -27,7 +27,7 @@ public class MybatisCrawlerDao implements CrawlerDao {
     }
 
     @Override
-    public String getNextLinkThenDelete() {
+    public synchronized String getNextLinkThenDelete() {
         try (SqlSession session = sqlSessionFactory.openSession(true)) {
             String url = session.selectOne("com.github.hcsp.MyMapper.selectNextAvailableLink");
             if (url != null) {
@@ -38,11 +38,12 @@ public class MybatisCrawlerDao implements CrawlerDao {
     }
 
     @Override
-    public void insertNewsIntoDatabase(String url, String title, String content) throws SQLException {
+    public synchronized void insertNewsIntoDatabase(String url, String title, String content) throws SQLException {
         try (SqlSession session = sqlSessionFactory.openSession(true)) {
             if(0 == (Integer)session.selectOne("com.github.hcsp.MyMapper.countTitle",title)){
-                News news = new News(title, url, content);
+                News news = new News(url, title, content);
                 System.out.println(title);
+                System.out.println(content);
                 session.insert("com.github.hcsp.MyMapper.insertNews", news);
             }
         }
