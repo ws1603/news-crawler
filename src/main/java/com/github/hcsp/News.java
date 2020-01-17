@@ -16,10 +16,10 @@ public class News {
         this.content = content;
     }
 
-    public News(){
+    public News() {
     }
 
-    public News(News old){
+    public News(News old) {
         this.id = old.id;
         this.content = old.content;
         this.title = old.title;

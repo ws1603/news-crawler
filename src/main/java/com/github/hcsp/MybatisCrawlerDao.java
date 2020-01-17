@@ -71,7 +71,7 @@ public class MybatisCrawlerDao implements CrawlerDao {
     public void insertLinkToBeProcessed(String link) {
         Map<String, Object> param = new HashMap<>();
         param.put("tableName", "links_to_be_processed");
-            param.put("link", link);
+        param.put("link", link);
         try (SqlSession session = sqlSessionFactory.openSession(true)) {
             session.insert("com.github.hcsp.MyMapper.insertLink", param);
         }
