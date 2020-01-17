@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 
-public class Crawler extends Thread{
+public class Crawler extends Thread {
     private CrawlerDao dao;
 
     Crawler(CrawlerDao dao) {
@@ -23,7 +23,7 @@ public class Crawler extends Thread{
     }
 
     @Override
-    public void run(){
+    public void run() {
         try {
             String link;
             //从数据库中加载下一个链接，如果能玩加载到则进行循环
@@ -44,7 +44,7 @@ public class Crawler extends Thread{
                     dao.insertProcessedLink(link);
                 }
             }
-        }catch(Exception e){
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
@@ -55,7 +55,7 @@ public class Crawler extends Thread{
             if (href.startsWith("//")) {
                 href = "https" + href;
             }
-            if (!(href.toLowerCase().startsWith("javascript") || href.startsWith("#"))) {
+            if (!(href.toLowerCase().startsWith("javascript") || href.startsWith("#") || href.contains("\\"))) {
                 dao.insertLinkToBeProcessed(href);
             }
         }

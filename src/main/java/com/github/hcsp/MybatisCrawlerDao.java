@@ -40,8 +40,8 @@ public class MybatisCrawlerDao implements CrawlerDao {
     @Override
     public synchronized void insertNewsIntoDatabase(String url, String title, String content) throws SQLException {
         try (SqlSession session = sqlSessionFactory.openSession(true)) {
-            if(0 == (Integer)session.selectOne("com.github.hcsp.MyMapper.countTitle",title)){
-                News news = new News(url, title, content);
+            if (0 == (Integer) session.selectOne("com.github.hcsp.MyMapper.countTitle", title)) {
+                News news = new News(title, url, content);
                 System.out.println(title);
                 System.out.println(content);
                 session.insert("com.github.hcsp.MyMapper.insertNews", news);
@@ -71,7 +71,7 @@ public class MybatisCrawlerDao implements CrawlerDao {
     public void insertLinkToBeProcessed(String link) {
         Map<String, Object> param = new HashMap<>();
         param.put("tableName", "links_to_be_processed");
-        param.put("link", link);
+            param.put("link", link);
         try (SqlSession session = sqlSessionFactory.openSession(true)) {
             session.insert("com.github.hcsp.MyMapper.insertLink", param);
         }
